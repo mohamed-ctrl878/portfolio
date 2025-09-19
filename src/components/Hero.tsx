@@ -184,9 +184,9 @@ const Hero: React.FC = () => {
             <h1
               className={`${TYPOGRAPHY[breakpoint].hero} text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-cyan-400 leading-tight`}
             >
-              <span className="block animate-pulse">Mohamed</span>
+              <span className="block animate-pulse">Mohamed Mahmoud</span>
               <span className={`block ${isMobile ? "mt-1" : "mt-2"}`}>
-                Mahmoud
+                Mohamed Mahmoud
               </span>
             </h1>
             <div

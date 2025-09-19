@@ -85,7 +85,7 @@ const projects: Project[] = [
     tech: ["React", "GSAP", "TailwindCSS"],
     color: "from-green-500 to-teal-600",
     demo: "",
-    source: "",
+    source: "https://github.com/mohamed-ctrl878/portfolio",
     end: "",
     img: [portfolio]
   },

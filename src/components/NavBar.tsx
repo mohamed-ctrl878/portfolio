@@ -5,8 +5,6 @@ import {
   useBreakpoint,
   useIsMobile,
   useIsTablet,
-  SPACING,
-  TYPOGRAPHY,
 } from "../utils/responsive";
 
 interface NavItem {
@@ -47,6 +45,13 @@ export default function Navbar(): JSX.Element {
   const tlRef = useRef<any>(null);
   const isScrolledRef = useRef<boolean>(false);
   const tickingRef = useRef<boolean>(false);
+  const indicatorAnimationsRef = useRef<any[]>([]);
+  const sectionChangeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const activeSectionRef = useRef<string>(activeSection);
+
+  useEffect(() => {
+    activeSectionRef.current = activeSection;
+  }, [activeSection]);
 
   // ---------- 1) Entrance animation (run once) ----------
   useEffect(() => {
@@ -76,6 +81,13 @@ export default function Navbar(): JSX.Element {
 
     return () => {
       tlRef.current?.kill?.();
+      // Cleanup indicator animations
+      indicatorAnimationsRef.current.forEach((tween) => {
+        if (tween && tween.kill) {
+          tween.kill();
+        }
+      });
+      indicatorAnimationsRef.current = [];
     };
   }, []); // run only once
 
@@ -142,9 +154,9 @@ export default function Navbar(): JSX.Element {
     return () => {
       window.removeEventListener("scroll", onScroll);
     };
-  }, []); // add listener once
+  }, [isMobile, isTablet]); // ensure nav style changes when breakpoints change
 
-  // ---------- 3) IntersectionObserver to set active section (stable) ----------
+  // ---------- 3) Section detection: combined logic (original observer + detectActive you liked) ----------
   useEffect(() => {
     const sectionIds = ["home", "about", "skills", "projects", "contact"];
     const sections = sectionIds
@@ -153,52 +165,148 @@ export default function Navbar(): JSX.Element {
 
     if (!sections.length) return;
 
+    const getNavHeight = () => navRef.current?.offsetHeight ?? 0;
+
+    // parameters (tweak if needed)
+    const HOME_TOP_TOLERANCE = 150; // px from top to still count as home
+    const HOME_VISIBILITY_RATIO = 0.25; // fraction of home visible to count as home
+
+    const detectActive = () => {
+      // prefer Home if near top OR sufficiently visible
+      const homeEl = document.getElementById("home");
+      if (homeEl) {
+        const rect = homeEl.getBoundingClientRect();
+        const homeHeight = rect.height || homeEl.offsetHeight || 1;
+
+        const visibleHeight =
+          Math.max(0, Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0));
+        const visibleRatio = visibleHeight / homeHeight;
+
+        if (window.scrollY <= HOME_TOP_TOLERANCE || visibleRatio >= HOME_VISIBILITY_RATIO) {
+          if (activeSectionRef.current !== "home") {
+            debouncedSectionChange("home");
+          } else {
+            animateActiveIndicator("home");
+          }
+          return;
+        }
+      }
+
+      // otherwise pick section whose center is closest to viewport center
+      const viewportCenter = window.scrollY + window.innerHeight / 2;
+      let closestId = sections[0].id;
+      let minDist = Infinity;
+
+      sections.forEach((s) => {
+        const rect = s.getBoundingClientRect();
+        const sTop = window.scrollY + rect.top;
+        const sCenter = sTop + rect.height / 2;
+        const dist = Math.abs(sCenter - viewportCenter);
+        if (dist < minDist) {
+          minDist = dist;
+          closestId = s.id;
+        }
+      });
+
+      if (closestId !== activeSectionRef.current) {
+        debouncedSectionChange(closestId);
+      } else {
+        animateActiveIndicator(closestId);
+      }
+    };
+
     const observer = new IntersectionObserver(
       (entries) => {
-        // pick the entry with largest intersectionRatio that isIntersecting
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-
-        if (visible.length > 0) {
-          const id = visible[0].target.id;
-          if (id !== activeSection) {
-            setActiveSection(id);
-            animateActiveIndicator(id);
-          }
-        }
+        // original behavior: when intersection thresholds change, run detectActive
+        detectActive();
       },
       {
         root: null,
-        threshold: [0.15, 0.35, 0.55, 0.75], // multiple thresholds to be responsive
+        rootMargin: `-${getNavHeight()}px 0px 0px 0px`,
+        threshold: [0, 0.15, 0.35, 0.5, 0.75, 1],
       }
     );
 
     sections.forEach((s) => observer.observe(s));
-    return () => observer.disconnect();
+
+    // run immediately to set initial state (important on load / refresh)
+    detectActive();
+
+    const onResize = () => detectActive();
+    window.addEventListener("resize", onResize);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", onResize);
+      if (sectionChangeTimeoutRef.current) {
+        clearTimeout(sectionChangeTimeoutRef.current);
+      }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // run once
+  }, []);
 
-  // ---------- animate indicator safely ----------
+  // ---------- animate indicator safely with cleanup ----------
   const animateActiveIndicator = (section: string) => {
-    const activeItem = document.querySelector(`[data-section="${section}"]`);
-    if (!activeItem) return;
-
-    const indicator = activeItem.querySelector(
-      ".nav-indicator"
-    ) as HTMLElement | null;
-    if (indicator) {
-      gsap.to(indicator, { scaleX: 1, duration: 0.28, ease: "power2.out" });
-    }
-
-    // reset other indicators
-    const others = document.querySelectorAll(".nav-indicator");
-    others.forEach((el) => {
-      const parent = el.parentElement;
-      if (parent?.getAttribute("data-section") !== section) {
-        gsap.to(el, { scaleX: 0, duration: 0.28, ease: "power2.out" });
+    // Kill any existing indicator animations to prevent conflicts
+    indicatorAnimationsRef.current.forEach((tween) => {
+      try {
+        if (tween && typeof tween.kill === "function") tween.kill();
+      } catch (e) {
+        /* ignore */
       }
     });
+    indicatorAnimationsRef.current = [];
+
+    // Get all indicators at once to avoid multiple DOM queries
+    const allIndicators = document.querySelectorAll(".nav-indicator");
+    if (!allIndicators.length) return;
+
+    allIndicators.forEach((indicator) => {
+      const parent = indicator.parentElement;
+      const isActive = parent?.getAttribute("data-section") === section;
+
+      // Create the animation and store reference for cleanup
+      const tween = gsap.to(indicator, {
+        scaleX: isActive ? 1 : 0,
+        duration: 0.35,
+        ease: "power3.out",
+        overwrite: "auto",
+      });
+
+      indicatorAnimationsRef.current.push(tween);
+    });
+  };
+
+  // ---------- debounced section change (fixed: optimistic ref update to avoid race) ----------
+  const debouncedSectionChange = (newSection: string) => {
+    // clear any pending change
+    if (sectionChangeTimeoutRef.current) {
+      clearTimeout(sectionChangeTimeoutRef.current);
+      sectionChangeTimeoutRef.current = null;
+    }
+
+    // if already the same as current ref, just animate to ensure visual sync
+    if (newSection === activeSectionRef.current) {
+      animateActiveIndicator(newSection);
+      return;
+    }
+
+    // optimistic update to the ref so subsequent checks see the new value immediately
+    activeSectionRef.current = newSection;
+
+    // schedule the actual state update (debounced) to avoid rapid re-renders
+    sectionChangeTimeoutRef.current = setTimeout(() => {
+      // only call setState if it's truly different from the current state (guard)
+      setActiveSection((prev) => {
+        if (prev === newSection) return prev;
+        return newSection;
+      });
+
+      // ensure visual indicator updated when the state finally settles
+      animateActiveIndicator(newSection);
+
+      sectionChangeTimeoutRef.current = null;
+    }, 50); // you can tweak 50ms sensitivity
   };
 
   // ---------- mobile toggle animation (kept simple & safe) ----------
@@ -241,6 +349,16 @@ export default function Navbar(): JSX.Element {
 
   // ---------- smooth scroll to section using GSAP's ScrollTo (assume plugin registered in utils) ----------
   const handleNavClick = (href: string) => {
+    const sectionId = href.substring(1);
+
+    // Immediately update active section for responsiveness
+    if (sectionChangeTimeoutRef.current) {
+      clearTimeout(sectionChangeTimeoutRef.current);
+    }
+    setActiveSection(sectionId);
+    animateActiveIndicator(sectionId);
+
+    // Then smooth scroll to target
     const target = document.querySelector(href) as HTMLElement | null;
     if (target) {
       gsap.to(window, {
@@ -312,13 +430,13 @@ export default function Navbar(): JSX.Element {
                 <li
                   key={item.name}
                   data-section={item.href.substring(1)}
-                  className="relative group cursor-pointer"
+                  className="relative group cursor-pointer transform-gpu"
                   onClick={() => handleNavClick(item.href)}
                 >
                   <div
                     className={`flex items-center ${
                       isTablet ? "gap-1 px-2 py-1" : "gap-2 px-4 py-2"
-                    } rounded-lg transition-all duration-300 hover:bg-white/5`}
+                    } rounded-lg transition-all duration-300 ease-out hover:bg-white/5 hover:scale-105 transform`}
                   >
                     <span
                       className={`transition-colors duration-300 ${
@@ -340,8 +458,12 @@ export default function Navbar(): JSX.Element {
 
                   {/* Active indicator */}
                   <div
-                    className="nav-indicator absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full transform origin-left scale-x-0"
-                    // style: initial scale-x-0 is from tailwind class; gsap will animate scaleX
+                    className="nav-indicator absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full transform origin-left scale-x-0 transition-transform duration-300 ease-out"
+                    style={{
+                      willChange: "transform",
+                      backfaceVisibility: "hidden",
+                      transform: "translate3d(0,0,0)",
+                    }}
                   ></div>
 
                   {/* Hover effect */}

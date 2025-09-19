@@ -1,7 +1,25 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { gsap, ScrollTrigger } from '../utils/gsapConfig';
-import { Mail, Phone, MapPin, Send, User, MessageSquare, CheckCircle, AlertCircle, Github, Linkedin, Twitter } from 'lucide-react';
-import { useBreakpoint, useIsMobile, useIsTablet, SPACING, TYPOGRAPHY } from '../utils/responsive';
+import React, { useEffect, useRef, useState } from "react";
+import { gsap, ScrollTrigger } from "../utils/gsapConfig";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Send,
+  User,
+  MessageSquare,
+  CheckCircle,
+  AlertCircle,
+  Github,
+  Linkedin,
+  Twitter,
+} from "lucide-react";
+import {
+  useBreakpoint,
+  useIsMobile,
+  useIsTablet,
+  SPACING,
+  TYPOGRAPHY,
+} from "../utils/responsive";
 
 interface FormData {
   name: string;
@@ -22,19 +40,19 @@ const ContactSection: React.FC = () => {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const successRef = useRef<HTMLDivElement>(null);
-  
+
   // Responsive hooks
   const breakpoint = useBreakpoint();
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
-  
+
   const [formData, setFormData] = useState<FormData>({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
   });
-  
+
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -54,36 +72,39 @@ const ContactSection: React.FC = () => {
       opacity: 1,
       y: 0,
       duration: 1,
-      ease: 'back.out(1.7)'
-    })
-    .to(form, {
-      opacity: 1,
-      y: 0,
-      duration: 0.8,
-      ease: 'power2.out'
-    }, '-=0.5');
+      ease: "back.out(1.7)",
+    }).to(
+      form,
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: "power2.out",
+      },
+      "-=0.5"
+    );
 
     // Animate form fields on scroll
-    const formFields = form.querySelectorAll('.form-field');
+    const formFields = form.querySelectorAll(".form-field");
     gsap.set(formFields, { opacity: 0, x: -30 });
-    
+
     ScrollTrigger.create({
       trigger: form,
-      start: 'top 80%',
+      start: "top 80%",
       onEnter: () => {
         gsap.to(formFields, {
           opacity: 1,
           x: 0,
           duration: 0.6,
           stagger: 0.1,
-          ease: 'power2.out'
+          ease: "power2.out",
         });
-      }
+      },
     });
 
     return () => {
       tl.kill();
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
     };
   }, []);
 
@@ -91,35 +112,35 @@ const ContactSection: React.FC = () => {
     const newErrors: FormErrors = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
+      newErrors.name = "Name is required";
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email';
+      newErrors.email = "Please enter a valid email";
     }
 
     if (!formData.subject.trim()) {
-      newErrors.subject = 'Subject is required';
+      newErrors.subject = "Subject is required";
     }
 
     if (!formData.message.trim()) {
-      newErrors.message = 'Message is required';
+      newErrors.message = "Message is required";
     } else if (formData.message.length < 10) {
-      newErrors.message = 'Message must be at least 10 characters';
+      newErrors.message = "Message must be at least 10 characters";
     }
 
     setErrors(newErrors);
-    
+
     // Animate error fields
-    Object.keys(newErrors).forEach(field => {
+    Object.keys(newErrors).forEach((field) => {
       const fieldElement = document.querySelector(`[data-field="${field}"]`);
       if (fieldElement) {
         gsap.to(fieldElement, {
           x: [0, -10, 10, -5, 5, 0],
           duration: 0.5,
-          ease: 'power2.out'
+          ease: "power2.out",
         });
       }
     });
@@ -129,29 +150,29 @@ const ContactSection: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setIsSubmitting(true);
 
     // Animate submit button
-    const submitButton = document.querySelector('.submit-button');
+    const submitButton = document.querySelector(".submit-button");
     if (submitButton) {
       gsap.to(submitButton, {
         scale: 0.95,
         duration: 0.1,
         yoyo: true,
         repeat: 1,
-        ease: 'power2.out'
+        ease: "power2.out",
       });
     }
 
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       setIsSubmitted(true);
-      
+
       // Show success animation
       const success = successRef.current;
       if (success) {
@@ -160,29 +181,28 @@ const ContactSection: React.FC = () => {
           scale: 1,
           opacity: 1,
           duration: 0.5,
-          ease: 'back.out(1.7)'
+          ease: "back.out(1.7)",
         });
       }
 
       // Reset form after delay
       setTimeout(() => {
-        setFormData({ name: '', email: '', subject: '', message: '' });
+        setFormData({ name: "", email: "", subject: "", message: "" });
         setIsSubmitted(false);
       }, 3000);
-
     } catch (error) {
-      console.error('Form submission error:', error);
+      console.error("Form submission error:", error);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleInputChange = (field: keyof FormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    
+    setFormData((prev) => ({ ...prev, [field]: value }));
+
     // Clear error when user starts typing
     if (errors[field]) {
-      setErrors(prev => {
+      setErrors((prev) => {
         const newErrors = { ...prev };
         delete newErrors[field];
         return newErrors;
@@ -196,7 +216,7 @@ const ContactSection: React.FC = () => {
       gsap.to(fieldElement, {
         scale: 1.02,
         duration: 0.2,
-        ease: 'power2.out'
+        ease: "power2.out",
       });
     }
   };
@@ -207,35 +227,37 @@ const ContactSection: React.FC = () => {
       gsap.to(fieldElement, {
         scale: 1,
         duration: 0.2,
-        ease: 'power2.out'
+        ease: "power2.out",
       });
     }
   };
 
   const contactInfo = [
     {
-      icon: <Mail className={`${isMobile ? 'w-4 h-4' : 'w-6 h-6'}`} />,
-      title: 'Email',
-      value: 'mohamed@example.com',
-      href: 'mailto:mohamed@example.com'
+      icon: <Mail className={`${isMobile ? "w-4 h-4" : "w-6 h-6"}`} />,
+      title: "Email",
+      value: "mohamedeleskanderwow@gmail.com",
+      href: "mailto:mohamedeleskanderwow@gmail.com",
     },
     {
-      icon: <Phone className={`${isMobile ? 'w-4 h-4' : 'w-6 h-6'}`} />,
-      title: 'Phone',
-      value: '+1 (555) 123-4567',
-      href: 'tel:+15551234567'
+      icon: <Linkedin className={`${isMobile ? "w-4 h-4" : "w-6 h-6"}`} />,
+      title: "LinkedIn",
+      value: "Mohamed Mahmoud",
+      href: "https://www.linkedin.com/in/mohamed-el-eskanderany/",
     },
-    {
-      icon: <MapPin className={`${isMobile ? 'w-4 h-4' : 'w-6 h-6'}`} />,
-      title: 'Location',
-      value: 'Cairo, Egypt',
-      href: '#'
-    }
   ];
 
   const socialLinks = [
-    { icon: <Github className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />, href: 'https://github.com/mohamed-ctrl878', label: 'GitHub' },
-    { icon: <Linkedin className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />, href: 'https://www.linkedin.com/in/mohamed-el-eskanderany/', label: 'LinkedIn' },
+    {
+      icon: <Github className={`${isMobile ? "w-4 h-4" : "w-5 h-5"}`} />,
+      href: "https://github.com/mohamed-ctrl878",
+      label: "GitHub",
+    },
+    {
+      icon: <Linkedin className={`${isMobile ? "w-4 h-4" : "w-5 h-5"}`} />,
+      href: "https://www.linkedin.com/in/mohamed-el-eskanderany/",
+      label: "LinkedIn",
+    },
   ];
 
   return (
@@ -248,7 +270,7 @@ const ContactSection: React.FC = () => {
           radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
           radial-gradient(circle at 80% 20%, rgba(147, 51, 234, 0.1) 0%, transparent 50%),
           linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%)
-        `
+        `,
       }}
     >
       {/* Animated background elements */}
@@ -260,53 +282,87 @@ const ContactSection: React.FC = () => {
 
       <div className={`relative z-10 ${SPACING[breakpoint].container}`}>
         {/* Header */}
-        <div className={`text-center ${isMobile ? 'mb-8' : 'mb-16'}`}>
-          <h2 
+        <div className={`text-center ${isMobile ? "mb-8" : "mb-16"}`}>
+          <h2
             ref={titleRef}
             className={`${TYPOGRAPHY[breakpoint].hero} ${SPACING[breakpoint].margin}`}
           >
             <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-cyan-400 bg-clip-text text-transparent">
               Let's
             </span>
-            <span className={`text-white ${isMobile ? 'mx-2' : 'mx-4'}`}>Connect</span>
+            <span className={`text-white ${isMobile ? "mx-2" : "mx-4"}`}>
+              Connect
+            </span>
           </h2>
-          
-          <p className={`${TYPOGRAPHY[breakpoint].body} text-gray-400 max-w-2xl mx-auto leading-relaxed`}>
-            {isMobile 
-              ? 'Ready to discuss your project? Let\'s connect and create something amazing.'
-              : 'Ready to bring your ideas to life? Let\'s discuss your next project and create something amazing together.'
-            }
+
+          <p
+            className={`${TYPOGRAPHY[breakpoint].body} text-gray-400 max-w-2xl mx-auto leading-relaxed`}
+          >
+            {isMobile
+              ? "Ready to discuss your project? Let's connect and create something amazing."
+              : "Ready to bring your ideas to life? Let's discuss your next project and create something amazing together."}
           </p>
         </div>
 
         <div className={`flex items-center justify-center`}>
           {/* Contact Information */}
-          <div className={`${isMobile ? 'space-y-4' : 'space-y-8'}`}>
+          <div className={`${isMobile ? "space-y-4" : "space-y-8"}`}>
             <div>
-              <h3 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-white ${isMobile ? 'mb-4' : 'mb-6'}`}>Get in Touch</h3>
-              <p className={`text-gray-400 ${isMobile ? 'mb-4 text-sm' : 'mb-8'} leading-relaxed`}>
-                {isMobile 
-                  ? 'Let\'s discuss opportunities, projects, or technology.'
-                  : 'I\'m always open to discussing new opportunities, interesting projects, or just having a chat about technology and development.'
-                }
+              <h3
+                className={`${
+                  isMobile ? "text-xl" : "text-2xl"
+                } font-bold text-white ${isMobile ? "mb-4" : "mb-6"}`}
+              >
+                Get in Touch
+              </h3>
+              <p
+                className={`text-gray-400 ${
+                  isMobile ? "mb-4 text-sm" : "mb-8"
+                } leading-relaxed`}
+              >
+                {isMobile
+                  ? "Let's discuss opportunities, projects, or technology."
+                  : "I'm always open to discussing new opportunities, interesting projects, or just having a chat about technology and development."}
               </p>
             </div>
 
             {/* Contact Details */}
-            <div className={`${isMobile ? 'space-y-3' : 'space-y-6'}`}>
+            <div className={`${isMobile ? "space-y-3" : "space-y-6"}`}>
               {contactInfo.map((item, index) => (
                 <a
                   key={index}
                   href={item.href}
-                  className={`flex items-center ${isMobile ? 'gap-3 p-3' : 'gap-4 p-4'} bg-white/5 backdrop-blur-sm ${isMobile ? 'rounded-lg' : 'rounded-xl'} border border-white/10 hover:border-white/20 transition-all duration-300 ${!isMobile ? 'hover:scale-105' : ''} group`}
+                  className={`flex items-center ${
+                    isMobile ? "gap-3 p-3" : "gap-4 p-4"
+                  } bg-white/5 backdrop-blur-sm ${
+                    isMobile ? "rounded-lg" : "rounded-xl"
+                  } border border-white/10 hover:border-white/20 transition-all duration-300 ${
+                    !isMobile ? "hover:scale-105" : ""
+                  } group`}
                 >
-                  <div className={`${isMobile ? 'w-8 h-8' : 'w-12 h-12'} bg-gradient-to-br from-blue-500/20 to-purple-600/20 rounded-lg flex items-center justify-center text-blue-400 group-hover:text-white transition-colors duration-300`}>
+                  <div
+                    className={`${
+                      isMobile ? "w-8 h-8" : "w-12 h-12"
+                    } bg-gradient-to-br from-blue-500/20 to-purple-600/20 rounded-lg flex items-center justify-center text-blue-400 group-hover:text-white transition-colors duration-300`}
+                  >
                     {item.icon}
                   </div>
                   <div>
-                    <p className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-500 mb-1`}>{item.title}</p>
-                    <p className={`text-white font-medium ${isMobile ? 'text-sm' : ''}`}>
-                      {isMobile && item.title === 'Email' ? 'mohamed@...' : item.value}
+                    <p
+                      className={`${
+                        isMobile ? "text-xs" : "text-sm"
+                      } text-gray-500 mb-1`}
+                    >
+                      {item.title}
+                    </p>
+                    <p
+                      className={`text-white font-medium ${
+                        isMobile ? "text-sm" : ""
+                      }`}
+                    >
+                      {isMobile && item.title === "Email"
+                        ? "mohamed@..."
+                        : item.value}
                     </p>
                   </div>
                 </a>
@@ -315,15 +371,25 @@ const ContactSection: React.FC = () => {
 
             {/* Social Links */}
             <div>
-              <h4 className={`${isMobile ? 'text-base' : 'text-lg'} font-semibold text-white ${isMobile ? 'mb-2' : 'mb-4'}`}>Follow Me</h4>
-              <div className={`flex ${isMobile ? 'gap-2' : 'gap-4'}`}>
+              <h4
+                className={`${
+                  isMobile ? "text-base" : "text-lg"
+                } font-semibold text-white ${isMobile ? "mb-2" : "mb-4"}`}
+              >
+                Follow Me
+              </h4>
+              <div className={`flex ${isMobile ? "gap-2" : "gap-4"}`}>
                 {socialLinks.map((link, index) => (
                   <a
                     key={index}
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`${isMobile ? 'w-9 h-9' : 'w-12 h-12'} bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 hover:border-blue-400 flex items-center justify-center text-gray-400 hover:text-blue-400 transition-all duration-300 ${!isMobile ? 'hover:scale-110' : ''}`}
+                    className={`${
+                      isMobile ? "w-9 h-9" : "w-12 h-12"
+                    } bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 hover:border-blue-400 flex items-center justify-center text-gray-400 hover:text-blue-400 transition-all duration-300 ${
+                      !isMobile ? "hover:scale-110" : ""
+                    }`}
                     aria-label={link.label}
                   >
                     {link.icon}

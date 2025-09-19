@@ -13,6 +13,7 @@ import TechStack from "./components/TechStack";
 import ContactSection from "./components/ContactSection";
 import "./App.css";
 import ProjectSection from "./components/ProjectSection";
+import { Analytics } from "@vercel/analytics/react";
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -55,6 +56,7 @@ export default function App() {
 
   return (
     <ErrorBoundary>
+      <Analytics />
       <div className="relative min-h-screen text-white bg-black overflow-x-hidden">
         {/* Global Navigation */}
         <Navbar />
