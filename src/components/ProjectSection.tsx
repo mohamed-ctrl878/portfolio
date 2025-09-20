@@ -43,7 +43,7 @@ export default function ProjectSlider(): React.JSX.Element {
 
   return (
     <>
-      <div className="text-center mb-16">
+      <div className="text-center py-6 px-4 mb-16">
         <h2
           className={`${TYPOGRAPHY[breakpoint].hero} ${SPACING[breakpoint].margin}`}
         >
