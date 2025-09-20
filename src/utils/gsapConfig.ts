@@ -18,7 +18,6 @@ gsap.defaults({
 gsap.config({
   force3D: true, // Hardware acceleration
   nullTargetWarn: false, // Reduce console warnings
-  trialWarn: false,
   autoSleep: 60, // Auto-sleep inactive timelines
 });
 

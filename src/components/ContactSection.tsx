@@ -138,7 +138,14 @@ const ContactSection: React.FC = () => {
       const fieldElement = document.querySelector(`[data-field="${field}"]`);
       if (fieldElement) {
         gsap.to(fieldElement, {
-          x: [0, -10, 10, -5, 5, 0],
+          keyframes: {
+            "0%": { x: 0 },
+            "10%": { x: -10 },
+            "30%": { x: 10 },
+            "50%": { x: -5 },
+            "70%": { x: 5 },
+            "100%": { x: 0 },
+          },
           duration: 0.5,
           ease: "power2.out",
         });
@@ -361,7 +368,7 @@ const ContactSection: React.FC = () => {
                       }`}
                     >
                       {isMobile && item.title === "Email"
-                        ? "mohamed@..."
+                        ? "mohamedmahmoudeleskanderwow@gmail.com"
                         : item.value}
                     </p>
                   </div>

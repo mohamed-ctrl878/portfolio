@@ -130,6 +130,9 @@ export const TYPOGRAPHY = {
     h1: 'text-2xl font-bold',
     h2: 'text-xl font-semibold',
     h3: 'text-lg font-medium',
+    heading: 'text-lg font-bold',
+    subheading: 'text-base font-semibold',
+    caption: 'text-xs',
     body: 'text-base',
     small: 'text-sm'
   },
@@ -138,6 +141,9 @@ export const TYPOGRAPHY = {
     h1: 'text-3xl font-bold',
     h2: 'text-2xl font-semibold',
     h3: 'text-xl font-medium',
+    heading: 'text-xl font-bold',
+    subheading: 'text-lg font-semibold',
+    caption: 'text-sm',
     body: 'text-base',
     small: 'text-sm'
   },
@@ -146,6 +152,9 @@ export const TYPOGRAPHY = {
     h1: 'text-4xl font-bold',
     h2: 'text-3xl font-semibold',
     h3: 'text-2xl font-medium',
+    heading: 'text-2xl font-bold',
+    subheading: 'text-xl font-semibold',
+    caption: 'text-base',
     body: 'text-lg',
     small: 'text-base'
   },
@@ -154,6 +163,9 @@ export const TYPOGRAPHY = {
     h1: 'text-5xl font-bold',
     h2: 'text-4xl font-semibold',
     h3: 'text-3xl font-medium',
+    heading: 'text-3xl font-bold',
+    subheading: 'text-2xl font-semibold',
+    caption: 'text-lg',
     body: 'text-xl',
     small: 'text-lg'
   },
@@ -162,6 +174,9 @@ export const TYPOGRAPHY = {
     h1: 'text-6xl font-bold',
     h2: 'text-5xl font-semibold',
     h3: 'text-4xl font-medium',
+    heading: 'text-4xl font-bold',
+    subheading: 'text-3xl font-semibold',
+    caption: 'text-xl',
     body: 'text-xl',
     small: 'text-lg'
   },
@@ -170,6 +185,9 @@ export const TYPOGRAPHY = {
     h1: 'text-7xl font-bold',
     h2: 'text-6xl font-semibold',
     h3: 'text-5xl font-medium',
+    heading: 'text-5xl font-bold',
+    subheading: 'text-4xl font-semibold',
+    caption: 'text-2xl',
     body: 'text-2xl',
     small: 'text-xl'
   }

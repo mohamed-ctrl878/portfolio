@@ -2,7 +2,7 @@ import { useEffect, useRef, useLayoutEffect, RefObject } from 'react';
 import { gsap, ScrollTrigger, AnimationUtils, customEases } from '../utils/gsapConfig';
 
 // Hook for basic GSAP animations
-export const useGSAP = (callback: (context: { gsap: typeof gsap, timeline: gsap.core.Timeline }) => void, dependencies: any[] = []) => {
+export const useGSAP = (callback: (context: { gsap: typeof gsap, timeline: gsap.core.Timeline }) => void | (() => void), dependencies: any[] = []) => {
   const ref = useRef<HTMLDivElement>(null);
   
   useLayoutEffect(() => {
@@ -86,7 +86,9 @@ export const useStagger = (
       ease
     });
     
-    return () => animation.kill();
+    return () => {
+      animation.kill();
+    };
   }, [selector]);
   
   return containerRef;
@@ -134,7 +136,9 @@ export const useRevealOnScroll = (options: {
       toggleActions: "play none none reverse"
     });
     
-    return () => trigger.kill();
+    return () => {
+      trigger.kill();
+    };
   }, []);
   
   return ref;
@@ -247,7 +251,9 @@ export const useTypewriter = (
       }
     });
     
-    return () => tl.kill();
+    return () => {
+      tl.kill();
+    };
   }, [text]);
   
   return ref;
@@ -284,7 +290,9 @@ export const useFloating = (
       delay
     });
     
-    return () => animation.kill();
+    return () => {
+      animation.kill();
+    };
   }, []);
   
   return ref;

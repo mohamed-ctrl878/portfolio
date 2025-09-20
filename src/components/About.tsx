@@ -8,7 +8,8 @@ import {
   TYPOGRAPHY,
 } from "../utils/responsive";
 import { Download, MapPin, Calendar, Coffee, Code2, Zap } from "lucide-react";
-import mohamedName from "../assets/other/WhatsApp Image 2025-07-10 at 08.47.19_247438f4.jpg";
+import mohamedName from "../assets/other/WhatsApp Image 2025-07-10 at 08.47.19_247438f4.jpg?url";
+
 const About = (): JSX.Element => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const titleRef = useRef<HTMLHeadingElement | null>(null);
@@ -110,8 +111,9 @@ const About = (): JSX.Element => {
       }
 
       // Counter animations
-      const counters = containerRef.current.querySelectorAll(".counter");
-      counters.forEach((counter) => {
+      const counters = containerRef.current?.querySelectorAll(".counter");
+      if (counters) {
+        counters.forEach((counter) => {
         const target = parseInt(counter.getAttribute("data-target") || "0");
         const obj = { value: 0 };
 
@@ -129,15 +131,35 @@ const About = (): JSX.Element => {
             });
           },
         });
-      });
+        });
+      }
     }, containerRef);
 
     return () => ctx.revert();
   }, [breakpoint, isMobile]);
 
   const handleDownloadCV = () => {
-    // Add your CV download logic here
-    console.log("Download CV clicked");
+    try {
+      // رابط Google Drive المباشر للتحميل
+      const driveFileId = '1HXB1zBuY0ZyCn-XlqYMp1DQqXP4carna';
+      const directDownloadUrl = `https://drive.google.com/uc?export=download&id=${driveFileId}`;
+      
+      // إنشاء رابط التحميل
+      const link = document.createElement('a');
+      link.href = directDownloadUrl;
+      link.download = 'Mohamed_Mahmoud_CV.pdf';
+      link.target = '_blank';
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      console.log("CV download initiated from Google Drive successfully");
+    } catch (error) {
+      console.error('Error downloading CV:', error);
+      // fallback: فتح الملف في نافذة جديدة للمشاهدة
+      window.open('https://drive.google.com/file/d/1HXB1zBuY0ZyCn-XlqYMp1DQqXP4carna/view', '_blank');
+    }
   };
 
   // Get responsive classes
@@ -223,13 +245,11 @@ const About = (): JSX.Element => {
                 bg-gradient-to-br from-blue-500/10 to-purple-600/10 backdrop-blur-sm
               `}
               >
-                {/* Profile image placeholder - replace with actual image */}
-                {/* <div className="w-full h-full bg-gradient-to-br from-blue-500/20 to-purple-600/20 flex items-center justify-center">
-                  <div className={`${isMobile ? "text-6xl" : "text-8xl"}`}>
-                    👨‍💻
-                  </div>
-                </div> */}
-                <img src={mohamedName} alt="me" />
+                <img 
+                  src={mohamedName} 
+                  alt="Mohamed Mahmoud - Frontend Developer" 
+                  className="w-full h-full object-cover"
+                />
 
                 {/* Decorative elements */}
                 <div className="absolute -top-4 -right-4 w-8 h-8 bg-blue-500 rounded-full blur-sm opacity-60"></div>
@@ -304,11 +324,13 @@ const About = (): JSX.Element => {
                 <p>
                   Frontend: React.js, Redux Toolkit, JavaScript (ES6+), Jest
                   Architecture: Clean Architecture, modular design Tools: Git,
-                  GitHub, REST APIs, Vite 📂 Check my projects and contributions
+                  GitHub, REST APIs, Vite 🔂 Check my projects and contributions
                   on{" "}
                   <a
-                    className="text-purple-400 font-semibold"
-                    href="https://github.com/mohamed-ctrl878."
+                    className="text-purple-400 font-semibold hover:text-purple-300 transition-colors duration-300"
+                    href="https://github.com/mohamed-ctrl878"
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     My github profile
                   </a>{" "}
@@ -320,7 +342,7 @@ const About = (): JSX.Element => {
               </div>
 
               {/* Download CV Button */}
-              <div className="pt-4">
+              <div className="pt-4 flex flex-wrap gap-3">
                 <button
                   onClick={handleDownloadCV}
                   className={`
@@ -330,11 +352,32 @@ const About = (): JSX.Element => {
                     bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold 
                     rounded-xl hover:from-blue-700 hover:to-purple-700 
                     transform hover:scale-105 transition-all duration-300 
-                    shadow-lg hover:shadow-xl
+                    shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50
+                    active:scale-95
                   `}
+                  aria-label="Download Mohamed Mahmoud's CV"
                 >
                   <Download className="w-4 h-4" />
                   Download CV
+                </button>
+                
+                {/* View CV Button (Optional) */}
+                <button
+                  onClick={() => window.open('https://drive.google.com/file/d/1HXB1zBuY0ZyCn-XlqYMp1DQqXP4carna/view', '_blank')}
+                  className={`
+                    inline-flex items-center gap-2 ${
+                      isMobile ? "px-6 py-3 text-sm" : "px-8 py-4 text-base"
+                    }
+                    bg-gradient-to-r from-gray-600 to-gray-700 text-white font-semibold 
+                    rounded-xl hover:from-gray-700 hover:to-gray-800 
+                    transform hover:scale-105 transition-all duration-300 
+                    shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-gray-500/50
+                    active:scale-95
+                  `}
+                  aria-label="View Mohamed Mahmoud's CV online"
+                >
+                  <Code2 className="w-4 h-4" />
+                  View CV
                 </button>
               </div>
             </div>

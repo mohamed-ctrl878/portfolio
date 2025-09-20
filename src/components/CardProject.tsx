@@ -87,7 +87,8 @@ const CardProject: React.FC<CardProjectProps> = ({ projects }) => {
   return (
     <>
       {projects.map((project: Project, index: number) => {
-        const isActive = displayActiveProject === index;
+        // Remove isActive logic as displayActiveProject is not defined
+        // const isActive = displayActiveProject === index;
         const imgs = project.img && project.img.length ? project.img : ['/images/placeholder.png'];
         const selectedIdx = activeThumbIndex[index] ?? 0;
         const selectedSrc = imgs[selectedIdx];
@@ -96,13 +97,11 @@ const CardProject: React.FC<CardProjectProps> = ({ projects }) => {
           <div
             key={index}
             data-project={index}
-            ref={(el) => (cardRefs.current[index] = el)}
-            className={`project-card flex-shrink-0 ${isMobile ? 'w-80' : isTablet ? 'w-88' : 'w-96'} bg-black/70 ${isMobile ? 'rounded-xl' : 'rounded-2xl'} border border-white/10 overflow-hidden ${isActive ? 'ring-2 ring-purple-500/50' : ''}`}
+            ref={(el) => { cardRefs.current[index] = el; }}
+            className={`project-card flex-shrink-0 ${isMobile ? 'w-80' : isTablet ? 'w-88' : 'w-96'} bg-black/70 ${isMobile ? 'rounded-xl' : 'rounded-2xl'} border border-white/10 overflow-hidden`}
             onMouseEnter={() => !isMobile && handleProjectHover(index, true)}
             onMouseLeave={() => !isMobile && handleProjectHover(index, false)}
             style={{
-              transform: isActive ? (isMobile ? 'scale(1.01)' : 'scale(1.02)') : 'scale(1)',
-              filter: isActive ? 'brightness(1.06)' : 'brightness(1)',
               willChange: 'transform,filter'
             }}
           >

@@ -46,7 +46,7 @@ export default function Navbar(): JSX.Element {
   const isScrolledRef = useRef<boolean>(false);
   const tickingRef = useRef<boolean>(false);
   const indicatorAnimationsRef = useRef<any[]>([]);
-  const sectionChangeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const sectionChangeTimeoutRef = useRef<number | null>(null);
   const activeSectionRef = useRef<string>(activeSection);
 
   useEffect(() => {
