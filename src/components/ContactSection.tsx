@@ -364,11 +364,11 @@ const ContactSection: React.FC = () => {
                     </p>
                     <p
                       className={`text-white font-medium ${
-                        isMobile ? "text-sm" : ""
+                        isMobile ? "text-xs" : ""
                       }`}
                     >
                       {isMobile && item.title === "Email"
-                        ? "mohamedmahmoudeleskanderwow@gmail.com"
+                        ? "mohamedmahmoudeleskanderwow"
                         : item.value}
                     </p>
                   </div>
