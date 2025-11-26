@@ -2,11 +2,11 @@
 
 A modern, interactive portfolio website showcasing full-stack development skills and creative projects. Built with React, TypeScript, and advanced animations using GSAP.
 
-## 🚀 Live Demo
+##  Live Demo
 
 [View Live Portfolio](https://your-portfolio-url.com) *(Update with your actual URL)*
 
-## ✨ Features
+##  Features
 
 - **Interactive Animations**: Smooth GSAP-powered animations and scroll triggers
 - **Performance Optimized**: Built-in performance monitoring and device-adaptive optimizations
@@ -16,7 +16,7 @@ A modern, interactive portfolio website showcasing full-stack development skills
 - **Accessibility**: ARIA labels, keyboard navigation, and screen reader support
 - **Performance Testing**: Built-in performance profiler and test suite
 
-## 🛠 Tech Stack
+##  Tech Stack
 
 ### Frontend
 - **React 19** - Latest React with improved rendering
@@ -38,7 +38,7 @@ A modern, interactive portfolio website showcasing full-stack development skills
 - **Device Capability Detection** - Adaptive performance settings
 - **Memory Management** - Animation cleanup and optimization
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 vite-project/
@@ -83,7 +83,7 @@ vite-project/
 └── README.md             # This file
 ```
 
-## 🚦 Getting Started
+##  Getting Started
 
 ### Prerequisites
 
@@ -124,7 +124,7 @@ vite-project/
 - `npm run preview` - Preview production build
 - `npm run lint` - Run ESLint
 
-## 🎨 Customization
+##  Customization
 
 ### Personal Information
 
@@ -180,7 +180,7 @@ performanceTest.runAutomatedTest()     // Performance testing
 - **Animation Count**: Tracked and optimized
 - **Load Time**: Optimized with code splitting and lazy loading
 
-## 🧪 Testing
+##  Testing
 
 ### Running Tests
 
@@ -238,7 +238,7 @@ VITE_CONTACT_FORM_URL=your-contact-form-endpoint
 VITE_ANALYTICS_ID=your-analytics-id
 ```
 
-## ♿ Accessibility
+##  Accessibility
 
 The portfolio is built with accessibility in mind:
 
@@ -255,7 +255,7 @@ The portfolio is built with accessibility in mind:
 - **Mobile**: iOS Safari 14+, Android Chrome 88+
 - **Graceful degradation**: Fallbacks for older browsers
 
-## 🔄 Updates & Maintenance
+##  Updates & Maintenance
 
 ### Updating Dependencies
 
@@ -277,7 +277,7 @@ npm audit fix
 - Optimize images and assets
 - Review and update responsive breakpoints
 
-## 🤝 Contributing
+##  Contributing
 
 Contributions are welcome! Please:
 
@@ -291,7 +291,7 @@ Contributions are welcome! Please:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 📞 Contact
+##  Contact
 
 - **Portfolio**: [Your Portfolio URL]
 - **GitHub**: [@your-username](https://github.com/your-username)
@@ -300,7 +300,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 🎯 Key Features Highlights
+##  Key Features Highlights
 
 ### Advanced Animations
 - **GSAP-powered** smooth animations
